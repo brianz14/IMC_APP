@@ -2,7 +2,9 @@ package com.example.imc
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -15,6 +17,8 @@ class IMC : AppCompatActivity() {
 
     private var esSeleccionadaHombre: Boolean = true
     private var esSeleccionadaMujer: Boolean = false
+
+    private lateinit var btnCalcular: Button
 
     private lateinit var vistaHombre: CardView
     private lateinit var vistaMujer: CardView
@@ -33,9 +37,7 @@ class IMC : AppCompatActivity() {
     private lateinit var btnRestarEdad: FloatingActionButton
     private lateinit var btnSumarEdad: FloatingActionButton
     private lateinit var tvEdadEntero: TextView
-    private var edadActual:Int = 13
-
-
+    private var edadActual: Int = 13
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +66,8 @@ class IMC : AppCompatActivity() {
         btnSumarEdad = findViewById(R.id.btnSumarEdad)
         tvEdadEntero = findViewById(R.id.tvEdad)
 
+        //btn
+        btnCalcular = findViewById(R.id.btnCalcular)
 
     }
 
@@ -79,7 +83,7 @@ class IMC : AppCompatActivity() {
         rsAltura.addOnChangeListener { _, value, _ ->
             val df = DecimalFormat("#.##")
             val res = df.format(value)
-            tvAltura.text = "$res cm"
+            tvAltura.text = "$res"
         }
 
         btnRestarPeso.setOnClickListener {
@@ -101,6 +105,30 @@ class IMC : AppCompatActivity() {
         btnSumarEdad.setOnClickListener {
             modificarEdad(+1)
         }
+
+        btnCalcular.setOnClickListener {
+            Calcular()
+        }
+
+
+    }
+
+    private fun Calcular() {
+        var altura: Double? = tvAltura.text.toString().toDouble();
+        var peso: Double? = tvPesoEntero.text.toString().toDouble();
+
+        altura = (altura?.div(100));
+        altura = (altura!! * altura!!)
+        var resultado: Double = peso!!.div(altura!!)
+        var texto:String?="";
+        when(resultado){
+            in Double.MIN_VALUE..17.9->{texto="Peso por debajo de la normalidad"}
+            in 18.0..24.9->{texto="Peso adecuado"}
+            in 25.0..29.9->{texto="Sobrepeso"}
+            in 30.0..Double.MAX_VALUE->{texto="Obesidad"}
+        }
+        Toast.makeText(this, " $texto", Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun modificarEdad(num: Int) {

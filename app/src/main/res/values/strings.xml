@@ -5,4 +5,10 @@
     <string name="height">Altura</string>
     <string name="weight">Peso</string>
     <string name="age">Edad</string>
+    <string name="titulo">Tu Resultado</string>
+    <string name="resultadoCorto">Sobrepeso</string>
+    <string name="resultadoNumerico">26.80</string>
+    <string name="resultadoDescripcion">Estas por encima de lo optimo para tu peso y altura.</string>
+    <string name="ReCalcular">RE-CALCULAR</string>
+
 </resources>

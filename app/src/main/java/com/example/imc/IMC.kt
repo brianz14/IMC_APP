@@ -1,10 +1,11 @@
 package com.example.imc
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -25,6 +26,7 @@ class IMC : AppCompatActivity() {
 
     private lateinit var tvAltura: TextView
     private lateinit var rsAltura: RangeSlider
+    private var alturaActual:Int=45
 
     //peso
     private lateinit var btnRestarPeso: FloatingActionButton
@@ -38,6 +40,8 @@ class IMC : AppCompatActivity() {
     private lateinit var btnSumarEdad: FloatingActionButton
     private lateinit var tvEdadEntero: TextView
     private var edadActual: Int = 13
+
+    //calcular
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +85,8 @@ class IMC : AppCompatActivity() {
             modificarGeneroColor()
         }
         rsAltura.addOnChangeListener { _, value, _ ->
+
+
             val df = DecimalFormat("#.##")
             val res = df.format(value)
             tvAltura.text = "$res"
@@ -109,26 +115,35 @@ class IMC : AppCompatActivity() {
         btnCalcular.setOnClickListener {
             Calcular()
         }
-
-
     }
 
     private fun Calcular() {
-        var altura: Double? = tvAltura.text.toString().toDouble();
-        var peso: Double? = tvPesoEntero.text.toString().toDouble();
 
-        altura = (altura?.div(100));
-        altura = (altura!! * altura!!)
-        var resultado: Double = peso!!.div(altura!!)
-        var texto:String?="";
+        var altura:Double= tvAltura.text.toString().toDouble();
+        var peso:Double= tvPesoEntero.text.toString().toDouble();
+
+        altura = altura.div(100)
+
+        val resultado: Double = peso/(altura*altura)
+        val resultadoFormateado = String.format("%.2f", resultado)
+
+        var texto=""
+        var descripcion=""
         when(resultado){
-            in Double.MIN_VALUE..17.9->{texto="Peso por debajo de la normalidad"}
-            in 18.0..24.9->{texto="Peso adecuado"}
-            in 25.0..29.9->{texto="Sobrepeso"}
-            in 30.0..Double.MAX_VALUE->{texto="Obesidad"}
+            in Double.MIN_VALUE..17.9->{texto="Peso inferior"; descripcion="El peso esta debajo de lo mormal para tu peso y altura"}
+            in 18.0..24.9->{texto="Peso adecuado"; descripcion="El peso es adecuado para tu peso y altura"}
+            in 25.0..29.9->{texto="Sobrepeso"; descripcion="El peso esta ligeramente encima de lo mormal para tu peso y altura"}
+            in 30.0..Double.MAX_VALUE->{texto="Obesidad" ; descripcion="El peso esta muy por encima de lo mormal para tu peso y altura"}
         }
-        Toast.makeText(this, " $texto", Toast.LENGTH_SHORT)
-            .show()
+
+
+
+        val intent= Intent(this,ResultadoActivity::class.java)
+        intent.putExtra("var_numero",resultadoFormateado)
+        intent.putExtra("var_texto",texto)
+        intent.putExtra("var_descripcion",descripcion)
+        startActivity(intent)
+
     }
 
     private fun modificarEdad(num: Int) {
@@ -137,12 +152,11 @@ class IMC : AppCompatActivity() {
             edadActual = num
             tvEdadEntero.text = edadActual.toString()
         }
-
     }
 
     private fun modificarPeso(num: Int) {
         var num = tvPesoEntero.text.toString().toInt() + (num)
-        if (num >= 60) {
+        if (num >= 45) {
             pesoActual = num
             tvPesoEntero.text = pesoActual.toString()
         }
